@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="100">
+
+
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="20">
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_weight="50"
+            android:background="#E2E43434"
+            android:gravity="center"
+            android:text="TextView1"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#E7E5E5" />
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_weight="80"
+            android:background="#E28A2525"
+            android:gravity="center"
+            android:text="TextView4"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#E7E5E5" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="20">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="left"
+            android:text="TextView2"
+            android:textColor="#D5363636"
+            android:textSize="14sp" />
+
+        <TextView
+            android:gravity="center|left"
+            android:text="TextView3"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:id="@+id/textView3"
+            android:layout_below="@+id/textView2"/>
+    </LinearLayout>
+
+</LinearLayout>
