@@ -45,9 +45,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        //Nodig voor webView
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
+        //laadt het settings bestand
         val settings = getSharedPreferences("UserInfo", 0)
 
         //File setup
@@ -55,8 +57,8 @@ class MainActivity : AppCompatActivity() {
         val path = applicationContext.getFilesDir();
         val nFile = File(path, fileName)
 
-        //Setup rooster
-        val roosterUrl = "https://mijnrooster.hu.nl/ical?5e455329&group=false&eu=U1REXDE3NTg5MjU=&h=rhtnwFUIE9LciH4W0YOh__XvdWknZdR717tjNz_BTEU="
+        //Setup rooster, lees de icsurl uit het settings bestand.
+        val roosterUrl = settings.getString("icsurl", "")!!.toString()
         val rooster = DownloadRooster(roosterUrl, applicationContext)
 
         firstButton.setOnClickListener{ view ->

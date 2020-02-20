@@ -1,44 +1,23 @@
 package com.example.roosterapp
 
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_settings.*
-import android.R.id.edit
-import android.content.SharedPreferences
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.view.View
-import android.webkit.WebChromeClient
-import android.webkit.WebView
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.content_main.*
 import java.io.File
-import android.webkit.WebViewClient
-import android.webkit.JavascriptInterface
-import android.content.Intent
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import android.net.Uri
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import androidx.core.app.ComponentActivity
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import android.webkit.JsResult
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import android.text.Editable
+import android.os.Build
+import android.webkit.*
+import androidx.annotation.RequiresApi
 
 
 class SettingsActivity : AppCompatActivity() {
 
+    var ICSUrl = ""
+    var fileHTML = ""
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
@@ -46,6 +25,9 @@ class SettingsActivity : AppCompatActivity() {
         //Get klascode
         val settings = getSharedPreferences("UserInfo", 0)
         editText.setText(settings.getString("klascode", "")!!.toString())
+        editText3.setText(settings.getString("icsurl", "")!!.toString())
+        editText2.setText(settings.getString("ww", "")!!.toString())
+        editText4.setText(settings.getString("email", "")!!.toString())
 
         //Browser
         if (savedInstanceState != null) {
@@ -69,26 +51,60 @@ class SettingsActivity : AppCompatActivity() {
             })
             webView.setWebChromeClient(object : WebChromeClient() {
                 override fun onJsAlert(view: WebView, url: String, message: String, result: JsResult): Boolean {
-                    System.out.println(message);
+                    //System.out.println(message);
                     result.confirm()
                     return true
                 }
             })
             webView.webChromeClient = WebChromeClient()
-
         };
-        val loginPage = LoginPage(webView, savedInstanceState);
+
+        //Navigate naar rooster
+        webView.loadUrl("https://mijnrooster.hu.nl/schedule?requireLogin=true");
+        webView.visibility = WebView.GONE
 
         //get ICS File knop
         icsButton.setOnClickListener {
-            getICSURL()
+            //Lees HTML af van pagina
+            getHTML()
+            //Set status
+            textView8.text = "Status:" + checkIngelogd()
+            if (checkIngelogd() == "Ingelogd" || checkIngelogd() == "Link opgehaald"){
+                getICSURL()
+                editText3.text = ICSUrl.toEditable()
+            }
         }
 
         //Opslaan knop
         opsButton.setOnClickListener {
             val editor = settings.edit()
             editor.putString("klascode", editText.getText().toString())
+            editor.putString("icsurl", editText3.getText().toString())
+            editor.putString("ww", editText2.getText().toString())
+            editor.putString("email", editText4.getText().toString())
             editor.apply()
+        }
+
+        //Log uit knop
+        buttonlu.setOnClickListener {
+            webView.clearHistory();
+            webView.clearFormData();
+            webView.clearCache(true);
+            CookieManager.getInstance().removeAllCookie();
+            webView.loadUrl("https://mijnrooster.hu.nl/schedule?requireLogin=true");
+        }
+
+        //Login knop
+        button4.setOnClickListener {
+            //webView.visibility = WebView.VISIBLE
+
+            //Probeer in te loggen
+            if (checkIngelogd() == "Inloggen vereist")
+                setUserDataWebView()
+            //Lees HTML af van pagina
+            getHTML()
+            //Set status
+            textView8.text = "Status:" + checkIngelogd()
         }
 
         refButton.setOnClickListener { view ->
@@ -113,11 +129,19 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
+    // 2 Javascript called functies
+    // Een is voor HTML en een is om de ICS file url te setten.
+
     @JavascriptInterface
     fun onData(value: String) {
-        println("Event Trigerred")
-        println(value)
-        editText3.setText("test")
+        println("Event Triggered")
+        ICSUrl = value
+    }
+
+    @JavascriptInterface
+    fun onGetHTML(value: String) {
+        println("Event Triggered")
+        fileHTML = value
     }
 
     fun getICSURL(){
@@ -130,5 +154,35 @@ class SettingsActivity : AppCompatActivity() {
                 "android.onData(url);"
         webView.loadUrl(script)
     }
-    
+
+    fun setUserDataWebView(){
+        val script = "javascript:" +
+                "document.getElementById('userNameInput').value = '" + editText4.text + "';" +
+                "document.getElementById('passwordInput').value = '" + editText2.text + "';" +
+                "document.getElementById('submitButton').click();"
+        webView.loadUrl(script)
+    }
+
+    fun getHTML(){
+        //Voer een javascript functie uit die via een JavaScriptInterface de HTML meegeeft
+        val script = "javascript:" +
+                "android.onGetHTML(document.body.innerHTML);"
+        webView.loadUrl(script)
+    }
+
+    fun checkIngelogd(): String{
+        //Check of op de rooster pagina of dat de link al in opgehaald.
+        if (fileHTML.contains("Uitloggen"))
+                return "Ingelogd"
+        if (fileHTML.contains("hu.nl/ical"))
+            return "Link opgehaald"
+        if (fileHTML.contains("loginForm"))
+            return "Inloggen vereist"
+        if (fileHTML.contains("errorText"))
+            return "Error bij inloggen"
+
+        return  "Uitgelogd"
+    }
+
+    fun String.toEditable(): Editable =  Editable.Factory.getInstance().newEditable(this)
 }

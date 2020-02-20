@@ -9,19 +9,19 @@
     tools:layout_editor_absoluteY="56dp"
     tools:showIn="@layout/activity_main">
 
-    <Button
+    <ImageButton
         android:id="@+id/firstButton"
-        android:layout_width="139dp"
+        android:layout_width="54dp"
         android:layout_height="54dp"
-        android:text="Laad rooster"
+        android:src="@drawable/ic_refresh"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
         android:id="@+id/firstListView"
         style="@style/Widget.AppCompat.ListView"
-        android:layout_width="410dp"
-        android:layout_height="653dp"
+        android:layout_width="406dp"
+        android:layout_height="618dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/firstButton" />
@@ -30,33 +30,29 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Leeg rooster"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/firstListView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toEndOf="@+id/firstButton"
-        app:layout_constraintTop_toTopOf="@+id/firstButton"
-        app:layout_constraintVertical_bias="0.516" />
+        app:layout_constraintEnd_toStartOf="@+id/button3"
+        app:layout_constraintHorizontal_bias="0.536"
+        app:layout_constraintStart_toEndOf="@+id/button2"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <ImageButton
         android:id="@+id/button2"
-        android:layout_width="33dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="4dp"
-        android:text="&lt;"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:src="@drawable/ic_arrowback"
         app:layout_constraintStart_toEndOf="@+id/firstButton"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <ImageButton
         android:id="@+id/button3"
-        android:layout_width="33dp"
-        android:layout_height="51dp"
-        android:layout_marginTop="4dp"
-        android:text="&gt;"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:src="@drawable/ic_arrowforw"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.994"
+        app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toEndOf="@+id/button2"
         app:layout_constraintTop_toTopOf="parent" />
 
